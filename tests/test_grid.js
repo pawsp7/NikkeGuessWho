@@ -96,7 +96,8 @@ assert(seeded.ok && seeded.fromFile === false && seeded.grid.length === 49, "unk
 const html = fs.readFileSync(path.join(root, "web/index.html"), "utf8");
 assert(html.includes("js/game.js"), "index.html loads the game");
 assert(html.includes("js/nikkes-data.js"), "index.html loads the roster");
-assert(html.includes("Original game by TheSakurist"), "index.html credits TheSakurist under the logo");
+assert(html.includes("Original game by"), "index.html credits the original game");
+assert(html.includes("https://github.com/TheSakurist/GWN"), "credit line links to the original GWN repo");
 assert(html.includes("id=\"rowsSelect\""), "index.html has a board size picker");
 
 if (failed) {

@@ -31,6 +31,7 @@ class RosterTests(unittest.TestCase):
     def test_index_credits_original_creator(self) -> None:
         html = (ROOT / "web" / "index.html").read_text(encoding="utf-8")
         self.assertIn("TheSakurist", html)
+        self.assertIn("https://github.com/TheSakurist/GWN", html)
         self.assertIn("rowsSelect", html)
         self.assertIn("colsSelect", html)
         self.assertIn("js/nikkes-data.js", html)

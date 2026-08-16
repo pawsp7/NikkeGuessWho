@@ -315,4 +315,12 @@
   colsSelect.addEventListener("change", () => onSizeChange(rowsSelect, colsSelect));
   modalRowsSelect.addEventListener("change", () => onSizeChange(modalRowsSelect, modalColsSelect));
   modalColsSelect.addEventListener("change", () => onSizeChange(modalRowsSelect, modalColsSelect));
+  document.querySelectorAll(".credit a").forEach((link) => {
+    link.addEventListener("click", (event) => {
+      if (typeof window.openExternal === "function") {
+        event.preventDefault();
+        window.openExternal(link.href);
+      }
+    });
+  });
 })();

@@ -69,6 +69,15 @@ input {
   line-height: 1.3;
 }
 
+.credit a {
+  color: var(--blue-dark);
+  text-decoration: underline;
+}
+
+.credit a:hover {
+  color: var(--blue);
+}
+
 .size-picker {
   display: flex;
   align-items: center;

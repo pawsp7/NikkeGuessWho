@@ -24,6 +24,7 @@ func startUI(url string) {
 		select {}
 	}
 	defer view.Destroy()
+	_ = view.Bind("openExternal", openExternal)
 	view.SetSize(1180, 820, webview2.HintMin)
 	view.Navigate(url)
 	view.Run()
