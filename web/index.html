@@ -11,11 +11,18 @@
     <div class="app">
       <aside class="sidebar">
         <img class="logo" src="ui/gwn_logo.png" alt="Guess Who Nikke" />
+        <p class="credit">Original game by TheSakurist</p>
+        <label class="size-picker">
+          Board
+          <select id="rowsSelect" aria-label="Board rows"></select>
+          <span>×</span>
+          <select id="colsSelect" aria-label="Board columns"></select>
+        </label>
         <div class="code-wrap">
           <img class="code-bar" src="ui/code_bar.png" alt="" />
           <input id="gridCodeDisplay" value="????????" readonly aria-label="Current grid code" />
         </div>
-        <input id="gridCodeInput" type="text" maxlength="8" placeholder="Enter grid code here" aria-label="Load grid code" />
+        <input id="gridCodeInput" type="text" maxlength="24" placeholder="Paste code, then Load" aria-label="Load grid code" />
         <button class="btn" id="randomizeBtn" type="button">Randomize</button>
         <button class="btn" id="copyBtn" type="button">Copy code</button>
         <button class="btn" id="loadBtn" type="button">Load grid</button>
@@ -30,7 +37,7 @@
         <div class="top-status">
           <div>
             <h1>Guess Who: Nikke Edition</h1>
-            <p id="statusLine">Every Nikke from the nikke.gg tier list.</p>
+            <p id="statusLine">Nikke.gg roster, treasure versions excluded.</p>
           </div>
           <p id="remainingLine">36 remaining</p>
         </div>
@@ -39,7 +46,7 @@
         </div>
         <p class="hint">
           Left-click to flip a guess down. Right-click to set Your Nikke.
-          Share the 8-character code so a friend can load the same board.
+          Share the board code so a friend can load the same size and portraits.
         </p>
       </main>
     </div>
@@ -50,9 +57,15 @@
       <div class="modal-card">
         <h2>Select an option</h2>
         <p>
-          Play immediately with a random board, generate a shareable
+          Pick a board size, then play immediately, generate a shareable
           <code>gridCodes.txt</code> pool, or load a friend's file.
         </p>
+        <label class="size-picker modal-size">
+          Board
+          <select id="modalRowsSelect" aria-label="Board rows"></select>
+          <span>×</span>
+          <select id="modalColsSelect" aria-label="Board columns"></select>
+        </label>
         <div class="modal-actions">
           <button class="btn" id="playNowBtn" type="button">Play now</button>
           <button class="btn" id="generateBtn" type="button">Generate codes</button>

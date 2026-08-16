@@ -41,7 +41,7 @@ input {
 
 .app {
   display: grid;
-  grid-template-columns: 210px minmax(0, 1fr);
+  grid-template-columns: 220px minmax(0, 1fr);
   gap: 12px;
   min-height: 100vh;
   padding: 16px 18px 28px;
@@ -60,9 +60,44 @@ input {
   margin-top: 4px;
 }
 
+.credit {
+  margin: -6px 0 2px;
+  width: 180px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.size-picker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 180px;
+  color: var(--ink);
+  font-size: 13px;
+}
+
+.size-picker select {
+  width: 52px;
+  height: 28px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  text-align: center;
+  font-size: 14px;
+  color: var(--ink);
+}
+
+.size-picker.modal-size {
+  width: auto;
+  margin: 0 auto 16px;
+}
+
 .code-wrap {
   position: relative;
-  width: 168px;
+  width: 180px;
   height: 42px;
 }
 
@@ -74,24 +109,24 @@ input {
 
 #gridCodeDisplay {
   position: absolute;
-  inset: 8px 10px 8px 54px;
+  inset: 8px 8px 8px 48px;
   border: 0;
   background: transparent;
   text-align: center;
-  font-size: 18px;
-  letter-spacing: 0.08em;
+  font-size: 13px;
+  letter-spacing: 0.02em;
   color: var(--ink);
   outline: none;
 }
 
 #gridCodeInput {
-  width: 168px;
+  width: 180px;
   height: 34px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.92);
   text-align: center;
-  font-size: 15px;
+  font-size: 14px;
   color: var(--ink);
 }
 
@@ -100,7 +135,7 @@ input {
 }
 
 .btn {
-  width: 168px;
+  width: 180px;
   height: 48px;
   border: 0;
   border-radius: 8px;
@@ -129,7 +164,7 @@ input {
 
 .your-nikke {
   margin-top: 8px;
-  width: 168px;
+  width: 180px;
   text-align: center;
 }
 
@@ -187,7 +222,7 @@ input {
 
 .board {
   display: grid;
-  grid-template-columns: repeat(6, minmax(92px, 118px));
+  grid-template-columns: repeat(var(--cols, 6), minmax(72px, 118px));
   gap: 8px;
   padding: 12px;
   background: var(--panel);
@@ -348,6 +383,6 @@ input {
   }
 
   .board {
-    grid-template-columns: repeat(6, minmax(72px, 1fr));
+    grid-template-columns: repeat(var(--cols, 6), minmax(64px, 1fr));
   }
 }

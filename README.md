@@ -1,6 +1,6 @@
 # Guess Who: Nikke Edition
 
-A Guess Who board game using **every Nikke on the [nikke.gg tier list](https://nikke.gg/tier-list/)**. Recreated from [TheSakurist/GWN](https://github.com/TheSakurist/GWN), with the original 6×6 multiplayer flow and portraits pulled from nikke.gg.
+A Guess Who board game using the [nikke.gg tier list](https://nikke.gg/tier-list/), excluding Treasure versions. Recreated from [TheSakurist/GWN](https://github.com/TheSakurist/GWN) — original game by **TheSakurist**.
 
 This is a fan project and is not affiliated with SHIFT UP, Goddess of Victory: NIKKE, or nikke.gg.
 
@@ -16,9 +16,9 @@ Linux / macOS: run `go run .` from this repo, or open `web/index.html` after sta
 
 Play it like Guess Who. Each player loads the **same 8-character grid code**, secretly right-clicks their Nikke, then takes turns asking yes/no questions and left-clicking to flip down characters that are out.
 
-1. **Play now** to get a random 6×6 board from the full 205-Nikke roster.
-2. **Copy code** and send it to a friend.
-3. They paste it and click **Load grid** — the same 36 portraits appear in the same order. No extra file is required.
+1. **Play now** after picking a board size (4×4 through 8×8, default 6×6). The roster is the nikke.gg tier list without Treasure versions.
+2. **Copy code** and send it to a friend. Codes look like `6x6-ABCD2345`, so the size comes along.
+3. They paste it and click **Load grid** — the same portraits appear in the same order. No extra file is required.
 4. Left-click a portrait to dim it (eliminate a guess).
 5. Right-click a portrait to set **Your Nikke** (click again to clear).
 
@@ -30,7 +30,7 @@ Hover a card for rarity, manufacturer, class, burst, element, and weapon — use
 
 ## Roster
 
-Portraits and names come from the public nikke.gg / DotGG tier-list API (`https://api.dotgg.gg/nikke/tierlist`). Treasure variants that share an icon on the site are still listed separately so the board can tell them apart by name.
+Portraits and names come from the public nikke.gg / DotGG tier-list API (`https://api.dotgg.gg/nikke/tierlist`). Treasure variants are kept in the data dump but are not added to the board.
 
 Refresh the dump with:
 
