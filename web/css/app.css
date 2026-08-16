@@ -222,12 +222,14 @@ input {
 
 .card .name {
   max-width: 100%;
+  min-height: 2.4em;
   font-size: 11px;
   line-height: 1.2;
   text-align: center;
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .card .meta {
