@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Guess Who: Nikke Edition</title>
+    <link rel="icon" href="ui/nikke_placeholder.png" />
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <img class="logo" src="ui/gwn_logo.png" alt="Guess Who Nikke" />
+        <div class="code-wrap">
+          <img class="code-bar" src="ui/code_bar.png" alt="" />
+          <input id="gridCodeDisplay" value="????????" readonly aria-label="Current grid code" />
+        </div>
+        <input id="gridCodeInput" type="text" maxlength="8" placeholder="Enter grid code here" aria-label="Load grid code" />
+        <button class="btn" id="randomizeBtn" type="button">Randomize</button>
+        <button class="btn" id="copyBtn" type="button">Copy code</button>
+        <button class="btn" id="loadBtn" type="button">Load grid</button>
+        <button class="btn secondary" id="optionsBtn" type="button">Grid options</button>
+        <div class="your-nikke">
+          <img id="yourNikkeImg" src="ui/nikke_placeholder.png" alt="Your Nikke" />
+          <div class="label">Your Nikke</div>
+          <div class="sub" id="yourNikkeName"></div>
+        </div>
+      </aside>
+      <main class="main">
+        <div class="top-status">
+          <div>
+            <h1>Guess Who: Nikke Edition</h1>
+            <p id="statusLine">Every Nikke from the nikke.gg tier list.</p>
+          </div>
+          <p id="remainingLine">36 remaining</p>
+        </div>
+        <div class="board-wrap">
+          <div class="board" id="board" role="grid" aria-label="Nikke guess board"></div>
+        </div>
+        <p class="hint">
+          Left-click to flip a guess down. Right-click to set Your Nikke.
+          Share the 8-character code so a friend can load the same board.
+        </p>
+      </main>
+    </div>
+
+    <div class="toast" id="toast" role="status"></div>
+
+    <div class="modal" id="optionsModal">
+      <div class="modal-card">
+        <h2>Select an option</h2>
+        <p>
+          Play immediately with a random board, generate a shareable
+          <code>gridCodes.txt</code> pool, or load a friend's file.
+        </p>
+        <div class="modal-actions">
+          <button class="btn" id="playNowBtn" type="button">Play now</button>
+          <button class="btn" id="generateBtn" type="button">Generate codes</button>
+          <button class="btn secondary" id="loadFileBtn" type="button">Load friend's file</button>
+        </div>
+      </div>
+    </div>
+    <input id="filePicker" type="file" accept=".txt,text/plain" hidden />
+
+    <script src="js/nikkes-data.js"></script>
+    <script src="js/grid.js"></script>
+    <script src="js/game.js"></script>
+  </body>
+</html>
