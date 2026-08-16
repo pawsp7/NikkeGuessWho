@@ -69,7 +69,7 @@ assert(
 );
 
 assert(GWN.formatShareCode(code, 6, 6) === "6x6-ABCD2345", "share codes include board size");
-assert(GWN.parseShareCode("6x6-abcd2345").ok, "sized share codes parse");
+assert(GWN.parseShareCode("  8 x 8 - abcd2345  ").ok, "share codes tolerate extra spaces");
 assert(GWN.parseShareCode("6x6-abcd2345").rows === 6, "parsed share codes keep rows");
 assert(GWN.burstLabel("1") === "I", "burst 1 -> I");
 assert(GWN.burstLabel("2") === "II", "burst 2 -> II");

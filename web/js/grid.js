@@ -91,8 +91,12 @@
   }
 
   function parseShareCode(text) {
-    const raw = String(text || "").trim().toUpperCase();
-    const sized = raw.match(/^(\d+)\s*[X×]\s*(\d+)\s*[-:]\s*([A-Z0-9]{8})$/);
+    const raw = String(text || "")
+      .trim()
+      .toUpperCase()
+      .replace(/['"]/g, "")
+      .replace(/\s+/g, "");
+    const sized = raw.match(/^(\d+)[X×](\d+)[-:]([A-Z0-9]{8})$/);
     if (sized) {
       const size = normalizeSize(sized[1], sized[2], MAX_DIM * MAX_DIM);
       return { ok: true, code: sized[3], rows: size.rows, cols: size.cols, size: size.size };
@@ -101,7 +105,7 @@
     if (plain.length === CODE_LENGTH) {
       return { ok: true, code: plain, rows: null, cols: null, size: null };
     }
-    return { ok: false, error: "Enter a grid code like 6x6-ABCD2345." };
+    return { ok: false, error: "Paste a grid code like 6x6-ABCD2345, then click Load grid." };
   }
 
   function rngFromCode(code) {

@@ -201,10 +201,25 @@
     applyGrid(window.GWN.resolveGrid(nikkes, code, null, size.rows, size.cols));
   }
 
-  function loadTypedCode() {
+  async function loadTypedCode() {
     const size = readSize();
-    const resolved = window.GWN.resolveGrid(nikkes, codeInput.value, codesMap, size.rows, size.cols);
+    let raw = codeInput.value.trim();
+    if (!raw) {
+      try {
+        raw = (await navigator.clipboard.readText()).trim();
+        if (raw) codeInput.value = raw;
+      } catch (_err) {
+        raw = "";
+      }
+    }
+    if (!raw) {
+      codeInput.focus();
+      showToast("Paste a grid code, then click Load grid.");
+      return;
+    }
+    const resolved = window.GWN.resolveGrid(nikkes, raw, codesMap, size.rows, size.cols);
     if (!resolved.ok) {
+      codeInput.focus();
       showToast(resolved.error);
       return;
     }
