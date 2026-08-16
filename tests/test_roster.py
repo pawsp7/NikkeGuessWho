@@ -28,11 +28,19 @@ class RosterTests(unittest.TestCase):
             self.assertEqual(data[:4], b"RIFF")
             self.assertEqual(data[8:12], b"WEBP")
 
-    def test_index_is_self_contained(self) -> None:
+    def test_index_credits_original_creator(self) -> None:
         html = (ROOT / "web" / "index.html").read_text(encoding="utf-8")
+        self.assertIn("TheSakurist", html)
+        self.assertIn("rowsSelect", html)
+        self.assertIn("colsSelect", html)
         self.assertIn("js/nikkes-data.js", html)
         self.assertIn("js/grid.js", html)
         self.assertIn("js/game.js", html)
+
+    def test_treasure_variants_are_identifiable(self) -> None:
+        treasures = [n["name"] for n in NIKKES if "(Treasure)" in n["name"] or "treasure=" in n.get("url", "")]
+        self.assertEqual(len(treasures), 17)
+        self.assertEqual(len(NIKKES) - len(treasures), 188)
 
 
 if __name__ == "__main__":

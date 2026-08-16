@@ -1,5 +1,6 @@
 (() => {
-  const nikkes = Array.isArray(window.NIKKES) ? window.NIKKES : [];
+  const allNikkes = Array.isArray(window.NIKKES) ? window.NIKKES : [];
+  const nikkes = window.GWN.playableRoster(allNikkes);
   const boardEl = document.getElementById("board");
   const codeDisplay = document.getElementById("gridCodeDisplay");
   const codeInput = document.getElementById("gridCodeInput");
@@ -10,12 +11,18 @@
   const toastEl = document.getElementById("toast");
   const optionsModal = document.getElementById("optionsModal");
   const filePicker = document.getElementById("filePicker");
+  const rowsSelect = document.getElementById("rowsSelect");
+  const colsSelect = document.getElementById("colsSelect");
+  const modalRowsSelect = document.getElementById("modalRowsSelect");
+  const modalColsSelect = document.getElementById("modalColsSelect");
 
   let currentGrid = [];
   let currentCode = "";
+  let currentShare = "";
   let chosenKey = null;
   let codesMap = new Map();
   let toastTimer = 0;
+  let syncingSize = false;
 
   const manufacturerClass = {
     Tetra: "m-tetra",
@@ -40,6 +47,48 @@
     return nikke.url || String(nikke.id);
   }
 
+  function fillSizeSelect(select) {
+    select.replaceChildren();
+    for (let n = window.GWN.MIN_DIM; n <= window.GWN.MAX_DIM; n += 1) {
+      const option = document.createElement("option");
+      option.value = String(n);
+      option.textContent = String(n);
+      select.append(option);
+    }
+  }
+
+  function readSize() {
+    return window.GWN.normalizeSize(rowsSelect.value, colsSelect.value, nikkes.length);
+  }
+
+  function setSize(rows, cols, persist) {
+    const size = window.GWN.normalizeSize(rows, cols, nikkes.length);
+    syncingSize = true;
+    rowsSelect.value = String(size.rows);
+    colsSelect.value = String(size.cols);
+    if (modalRowsSelect) modalRowsSelect.value = String(size.rows);
+    if (modalColsSelect) modalColsSelect.value = String(size.cols);
+    syncingSize = false;
+    if (persist !== false) {
+      try {
+        localStorage.setItem("gwn-board-size", JSON.stringify({ rows: size.rows, cols: size.cols }));
+      } catch (_err) {
+        /* ignore quota */
+      }
+    }
+    return size;
+  }
+
+  function loadSavedSize() {
+    try {
+      const saved = JSON.parse(localStorage.getItem("gwn-board-size") || "null");
+      if (saved && saved.rows && saved.cols) return setSize(saved.rows, saved.cols, false);
+    } catch (_err) {
+      /* ignore */
+    }
+    return setSize(window.GWN.DEFAULT_ROWS, window.GWN.DEFAULT_COLS, false);
+  }
+
   function updateRemaining() {
     const left = boardEl.querySelectorAll(".card:not(.eliminated)").length;
     remainingLine.textContent = `${left} remaining`;
@@ -61,7 +110,8 @@
     });
   }
 
-  function renderBoard(grid) {
+  function renderBoard(grid, cols) {
+    boardEl.style.setProperty("--cols", String(cols));
     boardEl.replaceChildren();
     grid.forEach((nikke) => {
       const card = document.createElement("button");
@@ -119,48 +169,56 @@
     updateRemaining();
   }
 
-  function applyGrid(code, grid) {
-    currentCode = code;
-    currentGrid = grid;
-    codeDisplay.value = code;
+  function applyGrid(resolved) {
+    currentCode = resolved.code;
+    currentShare = resolved.share;
+    currentGrid = resolved.grid;
+    setSize(resolved.rows, resolved.cols);
+    codeDisplay.value = resolved.share;
     setYourNikke(null);
-    renderBoard(grid);
-    statusLine.textContent = `${nikkes.length} Nikkes on the nikke.gg tier list · 6×6 board`;
+    renderBoard(resolved.grid, resolved.cols);
+    statusLine.textContent = `${nikkes.length} Nikkes · ${resolved.rows}×${resolved.cols} board`;
   }
 
   function randomize() {
+    const size = readSize();
     if (codesMap.size > 0) {
-      const codes = Array.from(codesMap.keys());
-      const code = codes[Math.floor(Math.random() * codes.length)];
-      const resolved = window.GWN.resolveGrid(nikkes, code, codesMap);
+      const matching = Array.from(codesMap.values()).filter((entry) => {
+        if (!entry.rows || !entry.cols) return entry.slugs.length === size.size;
+        return entry.rows === size.rows && entry.cols === size.cols;
+      });
+      const pool = matching.length ? matching : Array.from(codesMap.values());
+      const entry = pool[Math.floor(Math.random() * pool.length)];
+      const resolved = window.GWN.resolveGrid(nikkes, window.GWN.formatShareCode(entry.code, entry.rows || size.rows, entry.cols || size.cols), codesMap, size.rows, size.cols);
       if (!resolved.ok) {
         showToast(resolved.error);
         return;
       }
-      applyGrid(resolved.code, resolved.grid);
+      applyGrid(resolved);
       return;
     }
     const code = window.GWN.randomCode();
-    applyGrid(code, window.GWN.selectGrid(nikkes, code));
+    applyGrid(window.GWN.resolveGrid(nikkes, code, null, size.rows, size.cols));
   }
 
   function loadTypedCode() {
-    const resolved = window.GWN.resolveGrid(nikkes, codeInput.value, codesMap);
+    const size = readSize();
+    const resolved = window.GWN.resolveGrid(nikkes, codeInput.value, codesMap, size.rows, size.cols);
     if (!resolved.ok) {
       showToast(resolved.error);
       return;
     }
-    applyGrid(resolved.code, resolved.grid);
-    showToast(`Loaded ${resolved.code}`);
+    applyGrid(resolved);
+    showToast(`Loaded ${resolved.share}`);
   }
 
   async function copyCode() {
-    if (!currentCode) {
+    if (!currentShare) {
       showToast("Randomize a grid first.");
       return;
     }
     try {
-      await navigator.clipboard.writeText(currentCode);
+      await navigator.clipboard.writeText(currentShare);
       showToast("Grid code copied.");
     } catch (_err) {
       codeDisplay.select();
@@ -170,7 +228,8 @@
   }
 
   function downloadCodes() {
-    const text = window.GWN.generateCodeFile(nikkes, 1000);
+    const size = readSize();
+    const text = window.GWN.generateCodeFile(nikkes, 1000, Math.random, size.rows, size.cols);
     codesMap = window.GWN.parseGridCodes(text);
     const blob = new Blob([text], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -192,7 +251,7 @@
     reader.onload = () => {
       codesMap = window.GWN.parseGridCodes(String(reader.result || ""));
       if (codesMap.size === 0) {
-        showToast("No valid 36-Nikke codes in that file.");
+        showToast("No valid grid codes in that file.");
         return;
       }
       optionsModal.hidden = true;
@@ -202,7 +261,19 @@
     reader.readAsText(file);
   }
 
-  if (!nikkes.length || nikkes.length < window.GWN.GRID_SIZE) {
+  function onSizeChange(sourceRows, sourceCols) {
+    if (syncingSize) return;
+    setSize(sourceRows.value, sourceCols.value);
+    if (currentGrid.length) randomize();
+  }
+
+  fillSizeSelect(rowsSelect);
+  fillSizeSelect(colsSelect);
+  fillSizeSelect(modalRowsSelect);
+  fillSizeSelect(modalColsSelect);
+  loadSavedSize();
+
+  if (!nikkes.length || nikkes.length < window.GWN.MIN_DIM * window.GWN.MIN_DIM) {
     statusLine.textContent = "Nikke roster failed to load.";
     return;
   }
@@ -215,6 +286,7 @@
   });
   document.getElementById("playNowBtn").addEventListener("click", () => {
     codesMap = new Map();
+    setSize(modalRowsSelect.value, modalColsSelect.value);
     optionsModal.hidden = true;
     randomize();
   });
@@ -224,4 +296,8 @@
   codeInput.addEventListener("keydown", (event) => {
     if (event.key === "Enter") loadTypedCode();
   });
+  rowsSelect.addEventListener("change", () => onSizeChange(rowsSelect, colsSelect));
+  colsSelect.addEventListener("change", () => onSizeChange(rowsSelect, colsSelect));
+  modalRowsSelect.addEventListener("change", () => onSizeChange(modalRowsSelect, modalColsSelect));
+  modalColsSelect.addEventListener("change", () => onSizeChange(modalRowsSelect, modalColsSelect));
 })();
